@@ -12,16 +12,24 @@ const ActionsFooter = () => {
     // user is not logged in
     return (
       <div className="flex justify-between text-white">
-        <Link href="/login">Login</Link>
-        <Link href="/register">Register</Link>
+        <div className="m-2">
+          <Link href="/login">Login</Link>
+        </div>
+        <div className="m-2">
+          <Link href="/register">Register</Link>
+        </div>
       </div>
     );
   }
   // user is logged in
   return (
     <div className="flex justify-between text-white">
-      <Link href="/list/create">Create</Link>
-      <Link href="/logout">Logout</Link>
+      <div className="m-2">
+        <Link href="/list/create">Create</Link>
+      </div>
+      <div className="m-2">
+        <Link href="/logout">Logout</Link>
+      </div>
     </div>
   );
 };
