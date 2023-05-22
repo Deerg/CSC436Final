@@ -5,7 +5,7 @@ import useUserMustBeLogged from "csc-start/hooks/useUserMustBeLogged";
 import { addNewList } from "csc-start/utils/data";
 import { useState, useEffect } from "react";
 
-const Profile = () => {
+const Create = () => {
   const [listname, setListname] = useState("");
   const [linkType, setLinkType] = useState("link");
   const [currentLinks, setCurrentLinks] = useState([]);
@@ -96,4 +96,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Create;

@@ -5,7 +5,7 @@ import useUserMustBeLogged from "csc-start/hooks/useUserMustBeLogged";
 import { addNewLink } from "csc-start/utils/data";
 import { useState, useEffect } from "react";
 
-const Profile = () => {
+const GAGA = () => {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [linkType, setLinkType] = useState("link");
