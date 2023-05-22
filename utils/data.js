@@ -3,8 +3,10 @@ import supabase from "./supabase";
 const getItemByListID = async(listID) =>{
   const {data, error} = await supabase
   .from("items")
-  .select("*")
+  .select("order,item,complete")
   .eq("listID", listID);
+
+  console.log(data);
   if(error){
     return{
       success:false,
@@ -236,6 +238,7 @@ const getItemFromList = async (listID) => {
     .from("items")
     .select("*")
     .eq("listID", listID);
+    console.log(data);
   if (error) {
     return {
       success: false,

@@ -3,7 +3,7 @@ import { getItemByListID, getItemFromList, getList } from "csc-start/utils/data"
 
 const Item = async (props) => {
   const {listid, user_id} = props;
-  const {data: items} = await getItemFromList(listid);
+  const {data: items} = await getItemByListID(listid);
   return (
     <div className="barge flex gap-[24px] py-[60px] justify-center gap-[43px] items-center flex">
          <tbody>
