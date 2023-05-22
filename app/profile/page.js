@@ -1,4 +1,4 @@
-import Profile from "csc-start/components/Profile";
+import Profile from "csc-start/components/GAG";
 
 const Page = () => {
     return <Profile />;
