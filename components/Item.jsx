@@ -1,13 +1,37 @@
+"use client"
 
-import { getItemByListID, getItemFromList, getList } from "csc-start/utils/data";
+import useUserMustBeUser from "csc-start/hooks/useUserMustBeUser";
+import useUser from "csc-start/hooks/useUser";
+import { getCurrentUser,getItemFromList} from "csc-start/utils/data";
+import { useState, useEffect } from "react";
+import useUserMustBeLogged from "csc-start/hooks/useUserMustBeLogged";
+const Item = (props) => {
 
-const Item = async (props) => {
-  const {listid, user_id} = props;
-  const {data: items} = await getItemByListID(listid);
+  const {listid, user_id, slug} = props;
+  const [currentList, setCurrentList] = useState([]);
+  const [currentUserID, setCurrentUserID] = useState("");
+  const {user, refreshUser, error, loading } = useUser();
+  useUserMustBeUser(currentUserID, user_id, `/user/${slug}/list/${listid}/edit`);
+
+  useEffect(() => {
+
+    getItems();
+  },);
+
+  const getItems = async () => {
+    try {
+      const {data: tempCurrentList} = await getItemFromList(listid);
+      setCurrentList(tempCurrentList);
+      setCurrentUserID(user.id);
+    } catch (error) {
+      console.error(error);
+      // Handle the error appropriately
+    }
+  };
   return (
     <div className="barge flex gap-[24px] py-[60px] justify-center gap-[43px] items-center flex">
          <tbody>
-            {Array.isArray(items) && items.map((item) => {
+            {Array.isArray(currentList) && currentList.map((item) => {
                 return (
                   <tr key={item.id}>
                     <td>{item.order}:</td>

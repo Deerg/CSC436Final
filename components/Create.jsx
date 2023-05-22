@@ -53,23 +53,7 @@ const Profile = () => {
       {!error && loading && <p>Loading...</p>}
       {!error && !loading && (
         <div>
-          <div className="flex justify-between my-5">
-            <button
-              disabled={linkType === "social"}
-              onClick={() => setLinkType("social")}
-              className="button small"
-            >
-              Social
-            </button>
-            <button
-              disabled={linkType === "link"}
-              onClick={() => setLinkType("link")}
-              className="button small"
-            >
-              Lists
-            </button>
-          </div>
-        
+
           <p className="h2 my-5">
             Currently Viewing <span className="capitalize"></span>{" "}
             Lists

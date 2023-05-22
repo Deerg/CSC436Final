@@ -7,7 +7,6 @@ import List from "csc-start/components/List";
 
 const Page = async ({params: {slug}}) => {
     const{data, error, success} = await getUserBySlug(slug);
-
     if(!!error){
         return <p>{error.message}</p>
     }

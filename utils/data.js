@@ -4,9 +4,8 @@ const getItemByListID = async(listID) =>{
   const {data, error} = await supabase
   .from("items")
   .select("order,item,complete")
-  .eq("listID", listID);
-
-  console.log(data);
+  .eq("listID", listID)
+  .order("order", {ascending: true});
   if(error){
     return{
       success:false,
@@ -18,14 +17,46 @@ const getItemByListID = async(listID) =>{
     data
   }
 }
+const deleteItem = async(id) =>{
+  const {data, error} = await supabase
+  .from("items")
+  .delete()
+  .eq("id", id);
 
+  if(error){
+    return{
+      success:false,
+      error
+    }
+  }
+  return{
+    sucess:true,
+    data
+  }
+}
 const updateComplete = async(id, complete) =>{
   const {data, error} = await supabase
   .from("items")
   .update({complete: complete})
   .eq("id", id);
 
-  console.log(data);
+  if(error){
+    return{
+      success:false,
+      error
+    }
+  }
+  return{
+    sucess:true,
+    data
+  }
+}
+const updateOrder = async(id, order) =>{
+  const {data, error} = await supabase
+  .from("items")
+  .update({order: order})
+  .eq("id", id);
+
   if(error){
     return{
       success:false,
@@ -91,7 +122,7 @@ const addNewItem = async (listID, item, order, complete) => {
     listID,
     complete
   });
-  console.log(insertResponse);
+
   if (insertResponse.error) {
     return {
       success: false,
@@ -237,8 +268,8 @@ const getItemFromList = async (listID) => {
   const { data, error } = await supabase
     .from("items")
     .select("*")
-    .eq("listID", listID);
-    console.log(data);
+    .eq("listID", listID)
+    .order("order", {ascending: true});
   if (error) {
     return {
       success: false,
@@ -472,5 +503,7 @@ export {
   getName,
   getItemFromList,
   addNewItem,
-  updateComplete
+  updateComplete,
+  deleteItem,
+  updateOrder
 };

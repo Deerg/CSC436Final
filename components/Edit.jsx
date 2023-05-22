@@ -2,31 +2,48 @@
 
 import useUser from "csc-start/hooks/useUser";
 import useUserMustBeLogged from "csc-start/hooks/useUserMustBeLogged";
-import { addNewList, getItemByListID, getItemFromList, addNewItem, updateComplete } from "csc-start/utils/data";
+import useUserMustBeUser from "csc-start/hooks/useUserMustBeUser";
+import useUserNotUser from "csc-start/hooks/useUserNotUser";
+import {getItemFromList, addNewItem, updateComplete, deleteItem, updateOrder, getUserBySlug } from "csc-start/utils/data";
 import { useState, useEffect } from "react";
 
 const Edit = (props) => {
+  const { listId, userId, slug } = props;
   const [listname, setListname] = useState("");
   const [currentList, setCurrentList] = useState([]);
+  const [owner, setOwner] = useState("");
+  const [currentUserID, setCurrentUserID] = useState("");
   const [itemName, setItemName] = useState("");
   const [itemID, setItemID] = useState("");
   const [complete, setComplete] = useState("incomplete");
   const { user, refreshUser, error, loading } = useUser();
   // we removed the useUser in the userMustBeLogged component, and now are supplying the user
   useUserMustBeLogged(user, "in", "/login");
-    
+  useUserNotUser(owner,currentUserID);
   useEffect(() => {
     getItem();
   },);
-  const getItem = async () => {
+  const getOwner = async () => {
     try {
-      const {data: tempCurrentList} = await getItemFromList(props.listId);
-      setCurrentList(tempCurrentList);
+      const{data, error, success} = await getUserBySlug(slug);
+      setOwner(data.user_id);
     } catch (error) {
       console.error(error);
       // Handle the error appropriately
     }
   };
+  const getItem = async () => {
+    try {
+      const {data: tempCurrentList} = await getItemFromList(listId);
+      setCurrentList(tempCurrentList);
+      getOwner();
+      setCurrentUserID(user.id);
+    } catch (error) {
+      console.error(error);
+      // Handle the error appropriately
+    }
+  };
+  useUserNotUser(owner,currentUserID);
   const addItem = async (e) => {
     e.preventDefault();
     const order = currentList.length + 1;
@@ -41,9 +58,6 @@ const Edit = (props) => {
     //handle success
   };
 
-  const updateStatus = async(e) =>{
-    updateComplete(e, "true");
-  };
 
   return (
     <div className="barge">
@@ -58,21 +72,32 @@ const Edit = (props) => {
       {!error && !loading && (
         <div>
           <div className="flex justify-between my-5">
+          Press Down to decrease item priority(viseversa)
           </div>
     
           <table>
             <thead>
+              
             </thead>
             <tbody>
             {Array.isArray(currentList) && currentList.map((item) => {
                 return (
                   <tr key={item.id}>
+                    <button button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full" onClick={()=>{
+                        updateOrder(item.id, item.order+1);
+                    }}>Down</button>
+                    <button button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full" onClick={()=>{
+                        updateOrder(item.id, item.order-1);
+                    }}>Up</button>
                     <td>{item.order}:</td>
                     <td>{item.item}</td>
                     <td>{item.complete}</td>
-                    <button onClick={()=>{
+                    <button  button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded-full" onClick={()=>{
                         updateComplete(item.id, "complete");
                     }}>MarkDone</button>
+                     <button button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded-full" onClick={()=>{
+                        deleteItem(item.id);
+                    }}>DELETE</button>
                   </tr>
                 );
               })}
@@ -93,9 +118,7 @@ const Edit = (props) => {
                 type="text"
               />
             </p>
-            <p className="text-center">
-              <input type="submit" className="button small" />
-            </p>
+            <button  button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" type="submit"> ADD ITEM </button>
           </form>
         </div>
       )}

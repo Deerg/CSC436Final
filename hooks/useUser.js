@@ -1,3 +1,4 @@
+"use client"
 import { getCurrentUser } from "csc-start/utils/data";
 import supabase from "csc-start/utils/supabase";
 import { useRef, useEffect, useState } from "react";
@@ -19,7 +20,6 @@ const useUser = () => {
 
   const getUser = async () => {
     const currentUser = await getCurrentUser();
-
     // lets expose an error if one exists
     // we only care if an error has gone from 0 to something
     if (!currentUser.success) {
