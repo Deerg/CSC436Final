@@ -301,7 +301,7 @@ const getName = async (userId) => {
 const getList = async (userId) => {
   const { data, error } = await supabase
     .from("list")
-    .select("*")
+    .select("id, user_id, listname")
     .eq("user_id", userId);
   if (error) {
     return {

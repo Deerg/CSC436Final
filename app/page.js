@@ -2,7 +2,7 @@
 
 import{getLatestUsers} from "csc-start/utils/data";
 import Link from "next/link";
-export const revalidate = 5;
+export const revalidate = 1;
 
 export default async function Home() {
   const {success, data, error} = await getLatestUsers();

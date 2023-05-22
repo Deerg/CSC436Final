@@ -6,8 +6,6 @@ import { addNewList } from "csc-start/utils/data";
 import { useState, useEffect } from "react";
 
 const Profile = () => {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
   const [listname, setListname] = useState("");
   const [linkType, setLinkType] = useState("link");
   const [currentLinks, setCurrentLinks] = useState([]);

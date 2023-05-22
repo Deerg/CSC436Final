@@ -8,7 +8,7 @@ import useUser from "csc-start/hooks/useUser";
 
 const Register = () => {
   const { user } = useUser();
-  useUserMustBeLogged(user, "out", "/profile");
+  useUserMustBeLogged(user, "out", "/list/create");
   const router = useRouter();
 
   function reducer(state, action) {
