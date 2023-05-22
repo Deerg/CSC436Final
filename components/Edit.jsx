@@ -104,7 +104,7 @@ const Edit = (props) => {
             </tbody>
           </table>
           <form onSubmit={addItem}>
-            <p className="h2">Add New Link</p>
+            <p className="h2">Add New Item</p>
             <p className="my-5">
               <label htmlFor="Name" className="inline-block w-[75px]">
                 Name of Item:
