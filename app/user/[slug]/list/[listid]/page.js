@@ -4,13 +4,16 @@ import { getLinksLinks, getUserBySlug,getSocialLinks } from "csc-start/utils/dat
 import SocialLinks from "csc-start/components/SocialLinks";
 import LinksLinks from "csc-start/components/LinksLinks";
 import List from "csc-start/components/List";
-
-const Page = async ({params: {slug}}) => {
+import Item from "csc-start/components/Item";
+const Page = async (props) => {
+    const {params: {slug, listid}} = props;
     const{data, error, success} = await getUserBySlug(slug);
+    
 
     if(!!error){
         return <p>{error.message}</p>
     }
+    
     if(!data){
         notFound();
     }
@@ -19,7 +22,7 @@ const Page = async ({params: {slug}}) => {
     }
     const {user_id} = data;
     return <>
-        <List user_id={user_id} />
+        <Item user_id={user_id} listid={listid}/>
     </>
 }
 

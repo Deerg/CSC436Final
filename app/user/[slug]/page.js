@@ -19,7 +19,7 @@ const Page = async ({params: {slug}}) => {
     }
     const {user_id} = data;
     return <>
-        <List user_id={user_id} />
+        <List user_id={user_id} slug={slug} />
     </>
 }
 

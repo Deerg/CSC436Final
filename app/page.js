@@ -18,8 +18,8 @@ export default async function Home() {
   return(
     <main className="barge">
     {data.map(({name, slug}) =>{
-      return <Link key = {slug} href={`/user/${name}`} className="block my-5 button small">
-        {name}
+      return <Link key = {slug} href={`/user/${slug}`} className="block my-5 button small">
+        {slug}
       </Link>
       
     })}

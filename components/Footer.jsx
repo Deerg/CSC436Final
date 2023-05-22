@@ -3,6 +3,7 @@ import cargoBlack from "../images/cargo-black.svg";
 import ActionsFooter from "./ActionsFooter";
 
 const Footer = () => {
+  
   return (
     <footer className="barge">
       <div className=" flex justify-between items-center">

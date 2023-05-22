@@ -1,10 +1,46 @@
 import supabase from "./supabase";
 
-const getUserBySlug = async(uid) =>{
+const getItemByListID = async(listID) =>{
+  const {data, error} = await supabase
+  .from("items")
+  .select("*")
+  .eq("listID", listID);
+  if(error){
+    return{
+      success:false,
+      error
+    }
+  }
+  return{
+    sucess:true,
+    data
+  }
+}
+
+const updateComplete = async(id, complete) =>{
+  const {data, error} = await supabase
+  .from("items")
+  .update({complete: complete})
+  .eq("id", id);
+
+  console.log(data);
+  if(error){
+    return{
+      success:false,
+      error
+    }
+  }
+  return{
+    sucess:true,
+    data
+  }
+}
+
+const getUserBySlug = async(slug) =>{
   const {data, error} = await supabase
   .from("profile")
   .select("user_id")
-  .eq("name", uid)
+  .eq("slug", slug)
   .limit(1)
   .single();
 
@@ -21,12 +57,11 @@ const getUserBySlug = async(uid) =>{
   }
 }
 
-const getLatestUsers = async(num = 5) => {
+const getLatestUsers = async() => {
   const {data, error} = await supabase
   .from("profile")
   .select("name, slug")
-  .order("created_at", {ascending: false})
-  .limit(num);
+  .order("created_at", {ascending: false});
 
   if(error){
     return{
@@ -45,6 +80,29 @@ const logout = async () => {
   const { error } = await supabase.auth.signOut();
   return { success: !error, error };
 };
+
+const addNewItem = async (listID, item, order, complete) => {
+  linkRequestData.data = null;
+  const insertResponse = await supabase.from("items").insert({
+    order,
+    item,
+    listID,
+    complete
+  });
+  console.log(insertResponse);
+  if (insertResponse.error) {
+    return {
+      success: false,
+      error: insertResponse.error,
+    };
+  }
+  return {
+    success: true,
+    message: "successfully added",
+    data: insertResponse.data,
+  };
+};
+
 
 const addNewList = async (user_id, listname) => {
   listRequestData.data = null;
@@ -135,14 +193,18 @@ const getCurrentUser = async () => {
     if (listAuthor?.error) {
       return listAuthor;
     }
+    const {data: userName} = await getName(
+      session.data.session.user.id
+    );
+
     const user = {
       ...session.data.session.user,
       bargeMeta,
       socialLinks,
       linkLinks,
-      listAuthor
+      listAuthor,
+      userName,
     };
-
     return {
       success: true,
       data: user,
@@ -161,14 +223,51 @@ const listRequestData = {
   data: null,
 };
 
-const getList = async (userId) => {
-  if (listRequestData.data) {
-    return listRequestData.data;
+const nameRequestData = {
+  data: null,
+};
+
+const itemRequestData = {
+  data: null,
+};
+
+const getItemFromList = async (listID) => {
+  const { data, error } = await supabase
+    .from("items")
+    .select("*")
+    .eq("listID", listID);
+  if (error) {
+    return {
+      success: false,
+      error,
+    };
   }
 
+  itemRequestData.data = { success: true, data };
+  return { success: true, data };
+};
+
+const getName = async (userId) => {
+  const { data, error } = await supabase
+    .from("profile")
+    .select("name")
+    .eq("user_id", userId);
+  if (error) {
+    return {
+      success: false,
+      error,
+    };
+  }
+
+  nameRequestData.data = { success: true, data };
+
+  return { success: true, data };
+};
+
+const getList = async (userId) => {
   const { data, error } = await supabase
     .from("list")
-    .select("id, listname, user_id")
+    .select("*")
     .eq("user_id", userId);
   if (error) {
     return {
@@ -178,15 +277,10 @@ const getList = async (userId) => {
   }
 
   listRequestData.data = { success: true, data };
-
   return { success: true, data };
 };
 
 const getLinks = async (userId) => {
-  if (linkRequestData.data) {
-    return linkRequestData.data;
-  }
-
   const { data, error } = await supabase
     .from("links")
     .select("*")
@@ -370,5 +464,10 @@ export {
   getLatestUsers,
   getUserBySlug,
   addNewList,
-  getList
+  getList,
+  getItemByListID,
+  getName,
+  getItemFromList,
+  addNewItem,
+  updateComplete
 };

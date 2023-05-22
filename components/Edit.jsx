@@ -2,36 +2,36 @@
 
 import useUser from "csc-start/hooks/useUser";
 import useUserMustBeLogged from "csc-start/hooks/useUserMustBeLogged";
-import { addNewList } from "csc-start/utils/data";
+import { addNewList, getItemByListID, getItemFromList, addNewItem, updateComplete } from "csc-start/utils/data";
 import { useState, useEffect } from "react";
 
-const Profile = () => {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+const Edit = (props) => {
   const [listname, setListname] = useState("");
-  const [linkType, setLinkType] = useState("link");
-  const [currentLinks, setCurrentLinks] = useState([]);
-
-  // the user hook, will, provide us with the following, and it is completely abstracted away
-  //  - user, and update whenever it's changed (undefined if loading, set if loaded)
-
+  const [currentList, setCurrentList] = useState([]);
+  const [itemName, setItemName] = useState("");
+  const [itemID, setItemID] = useState("");
+  const [complete, setComplete] = useState("incomplete");
   const { user, refreshUser, error, loading } = useUser();
   // we removed the useUser in the userMustBeLogged component, and now are supplying the user
   useUserMustBeLogged(user, "in", "/login");
-
+    
   useEffect(() => {
-    if (user) {
-      let tempCurrentLinks = user.listAuthor;
-      setCurrentLinks(tempCurrentLinks);
+    getItem();
+  },);
+  const getItem = async () => {
+    try {
+      const {data: tempCurrentList} = await getItemFromList(props.listId);
+      setCurrentList(tempCurrentList);
+    } catch (error) {
+      console.error(error);
+      // Handle the error appropriately
     }
-  }, [user, linkType]);
-
-
-  const addList = async (e) => {
+  };
+  const addItem = async (e) => {
     e.preventDefault();
-    const order = currentLinks.length + 1;
-    const addedLink = await addNewList(user.id, listname);
-    if (addedLink.success == false) {
+    const order = currentList.length + 1;
+    const addedList = await addNewItem(props.listId, itemName, order, complete);
+    if (addedList.success == false) {
       //handle error
       return;
     }
@@ -39,6 +39,10 @@ const Profile = () => {
     //  or make a new request....
     refreshUser();
     //handle success
+  };
+
+  const updateStatus = async(e) =>{
+    updateComplete(e, "true");
   };
 
   return (
@@ -54,56 +58,41 @@ const Profile = () => {
       {!error && !loading && (
         <div>
           <div className="flex justify-between my-5">
-            <button
-              disabled={linkType === "social"}
-              onClick={() => setLinkType("social")}
-              className="button small"
-            >
-              Social
-            </button>
-            <button
-              disabled={linkType === "link"}
-              onClick={() => setLinkType("link")}
-              className="button small"
-            >
-              Lists
-            </button>
           </div>
-        
-          <p className="h2 my-5">
-            Currently Viewing <span className="capitalize"></span>{" "}
-            Lists
-          </p>
+    
           <table>
             <thead>
-
             </thead>
             <tbody>
-            {currentLinks.map((list) => {
+            {Array.isArray(currentList) && currentList.map((item) => {
                 return (
-                  <tr key={list.id}>
-                    <td> {list.id}: {list.listname}</td>
+                  <tr key={item.id}>
+                    <td>{item.order}:</td>
+                    <td>{item.item}</td>
+                    <td>{item.complete}</td>
+                    <button onClick={()=>{
+                        updateComplete(item.id, "complete");
+                    }}>MarkDone</button>
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          <form onSubmit={addList}>
-            <p className="h2">Add New List</p>
+          <form onSubmit={addItem}>
+            <p className="h2">Add New Link</p>
             <p className="my-5">
               <label htmlFor="Name" className="inline-block w-[75px]">
-                Listname
+                Name of Item:
               </label>
               <input
-                id="listname"
+                id="itemName"
                 className="border border-2 border-black px-2"
-                value={listname}
-                onChange={(e) => setListname(e.target.value)}
+                value={itemName}
+                onChange={(e) => setItemName(e.target.value)}
                 required
                 type="text"
               />
             </p>
-            
             <p className="text-center">
               <input type="submit" className="button small" />
             </p>
@@ -114,4 +103,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Edit;
